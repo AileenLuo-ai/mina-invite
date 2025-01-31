@@ -16,16 +16,24 @@ h1 {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--background);
 }
 
-gradient {
+#gradient {
   color: linear-gradient(180deg, rgb(217, 217, 217) 46.28%, #73737323 100%);
+}
+
+.transform-gpu,
+#transform-gpu {
+  transform: translate3d(var(--tw-translate-x), var(--tw-translate-y), 0)
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: #f1f1f1;
+    --foreground: #171717;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
@@ -51,7 +59,7 @@ gradient {
     --radius: 0.5rem;
   }
   .dark {
-    --background: 0 0% 3.9%;
+    --background: #f1f1f1;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;

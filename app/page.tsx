@@ -1,23 +1,88 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 
 const MinaText = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isPhotoVisible, setIsPhotoVisible] = useState(false);
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const handleSpanClick = () => {
+    setIsPhotoVisible(!isPhotoVisible);
+    setIsHovered(!isHovered);
+  };
+
+  const handleMouseMove = (event) => {
+    mouseX.set(event.clientX);
+    mouseY.set(event.clientY);
+  };
+
+  const skewX = useTransform(mouseX, [0, window.innerWidth], [-0.8, 0.8]);
+  const skewY = useTransform(mouseY, [0, window.innerHeight], [0.8, -0.8]);
 
   return (
-    <div id="gradient" className="relative h-screen">
-      <div className="grid place-items-center h-full mix-blend-mode:color-burn">
-        <motion.img
-          initial={{ opacity: 0, scale: 0.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.1, ease: "easeOut" }}
-          src="/colorimage.png"
-          alt="colorimage.png"
-          className="w-[40vw] h-auto mix-blend-color-burn"
-        />
-      </div>
+    <div className="relative h-screen" onMouseMove={handleMouseMove}>
+      <AnimatePresence>
+        {isPhotoVisible && (
+          <motion.div
+            className="absolute inset-0 z-10 grid place-items-center"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            <motion.img
+              drag
+              whileDrag={{
+                scale: 1.1,
+                backgroundColor: "#73737323",
+                cursor: "grabbing",
+              }}
+              id="transform-gpu"
+              src="/photo.png"
+              alt="photo.png"
+              className="w-[40vw] h-auto transform"
+              style={{
+                skewX,
+                skewY,
+              }}
+            />
+            {/* // style={{
+              //   transform: "perspective(1000px) rotateX(0deg) rotateY(0deg)",
+              //   transition: "transform 1s cubic-bezier(0.34, 1.56, 0.64, 1)",
+              //   transformStyle: "preserve-3d",
+              //   willChange: "transform",
+              // }}
+            /> */}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {!isPhotoVisible && (
+          <motion.div
+            className="absolute inset-0 grid place-items-center mix-blend-color-burn"
+            initial={{ opacity: 0, scale: 0.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.1, ease: "easeOut" }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.img
+              src="/colorimage.png"
+              alt="colorimage.png"
+              className="w-[40vw] h-auto"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <motion.h1
@@ -47,6 +112,7 @@ const MinaText = () => {
             className="group relative italic underline decoration-dotted decoration-slate-400 underline-offset-4 hover:text-slate-400 cursor-pointer active:opacity-10 duration-300"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onClick={handleSpanClick}
           >
             mina-leen
             {isHovered && (
